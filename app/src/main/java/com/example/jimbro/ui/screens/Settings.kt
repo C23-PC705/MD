@@ -78,7 +78,7 @@ fun Settings(
                     color = primary,
                     textAlign = TextAlign.Center, fontSize = 16.sp, lineHeight = 24.sp)
             }
-            Spacer(modifier = modifier.height(60.dp))
+            Spacer(modifier = modifier.height(30.dp))
             Button(modifier = Modifier, onClick = {
                 navController.navigate(Screen.editBmi.route)
             }, colors = ButtonDefaults.buttonColors(backgroundColor = primary)) {
@@ -131,7 +131,34 @@ fun Settings(
                 }
 
             }
-            Spacer(modifier = modifier.height(120.dp))
+            Spacer(modifier = modifier.height(30.dp))
+            Button(modifier = Modifier, onClick = {
+                navController.navigate(Screen.editPassword.route)
+            }, colors = ButtonDefaults.buttonColors(backgroundColor = primary)) {
+                Row(
+                    modifier = Modifier
+                        .height(80.dp)
+                        .padding(10.dp)
+                        .width(300.dp),
+                    Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(text = "Edit Password",
+                        modifier = Modifier,
+                        color = secondary,
+                        textAlign = TextAlign.Center,
+                        fontSize = 16.sp,
+                        lineHeight = 24.sp,
+                        fontWeight = FontWeight.Bold)
+                    Icon(
+                        imageVector = Icons.Default.ArrowForward,
+                        contentDescription = "Going To Edit Password"
+                    )
+
+
+                }
+            }
+            Spacer(modifier = modifier.height(40.dp))
 
 
             redbutton(text = "Logout") {

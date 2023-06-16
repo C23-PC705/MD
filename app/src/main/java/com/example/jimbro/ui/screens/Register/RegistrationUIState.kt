@@ -8,6 +8,6 @@ data class RegistrationUIState(
     var height  :String = "",
     var weight  :String = "",
     var intensity  :String = "",
-    var gender :Boolean = false,
+    var gender :String = "",
 
 )

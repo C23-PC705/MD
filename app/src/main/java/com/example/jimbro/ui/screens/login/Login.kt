@@ -12,6 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -19,7 +21,6 @@ import com.example.jimbro.R
 import com.example.jimbro.ui.components.MyTextFieldComponent
 import com.example.jimbro.ui.components.bluebutton
 import com.example.jimbro.ui.navigation.Screen
-import com.example.jimbro.ui.screens.Register.RegisterViewModel
 import com.example.jimbro.ui.screens.Register.SignupUIEvent
 import com.example.jimbro.ui.screens.login.LoginViewModel
 import com.example.jimbro.ui.theme.background
@@ -28,8 +29,8 @@ import com.nativemobilebits.loginflow.data.login.LoginUIEvent
 @Composable
 fun Login(
     modifier: Modifier = Modifier,
-    loginViewModel: LoginViewModel = viewModel(),
-    navController: NavHostController = rememberNavController()
+    loginViewModel: LoginViewModel,
+    navController: NavHostController = rememberNavController(),
 ) {
     Surface(modifier = Modifier
         .fillMaxSize()
@@ -49,20 +50,20 @@ fun Login(
             MyTextFieldComponent(
                 labelValue = "Email",
                 onTextChanged = {
-                    loginViewModel.onEvent(LoginUIEvent.EmailChanged(it))
+                    loginViewModel.onEventLogin(LoginUIEvent.EmailChanged(it))
                 },
             )
 
             MyTextFieldComponent(
                 labelValue = "Password",
                 onTextChanged = {
-                    loginViewModel.onEvent(LoginUIEvent.PasswordChanged(it))
+                    loginViewModel.onEventLogin(LoginUIEvent.PasswordChanged(it))
                 },
                 password = true
             )
 
             bluebutton(text = "Login", onClick = {
-                loginViewModel.onEvent(LoginUIEvent.LoginButtonClicked)
+                loginViewModel.onEventLogin(LoginUIEvent.LoginButtonClicked)
                 navController.navigate(Screen.Home.route)
             })
         }

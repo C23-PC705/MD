@@ -1,5 +1,6 @@
 package com.example.jimbro.ui.screens.EditBmi
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,6 +12,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -22,11 +24,17 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.jimbro.R
+import com.example.jimbro.model.EditBmi
 import com.example.jimbro.model.SportsData
 import com.example.jimbro.ui.components.MyTextFieldComponent
 import com.example.jimbro.ui.components.MyTextFieldValueComponent
 import com.example.jimbro.ui.components.bluebutton
+import com.example.jimbro.ui.components.dropDownIntensity
 import com.example.jimbro.ui.navigation.Screen
+import com.example.jimbro.ui.screens.EditProfile.editProfileScreen
+import com.example.jimbro.ui.screens.Register.SignupUIEvent
+import com.example.jimbro.ui.screens.login.LoginViewModel
+import com.example.jimbro.ui.screens.login.UiState
 import com.example.jimbro.ui.screens.sportList
 import com.example.jimbro.ui.theme.background
 import com.example.jimbro.ui.theme.primary
@@ -37,10 +45,40 @@ import com.nativemobilebits.loginflow.data.login.LoginUIEvent
 @Composable
 fun editBmi(
     modifier: Modifier = Modifier,
-    editBmiViewModel: EditBmiViewModel = viewModel(),
+    editBmiViewModel: LoginViewModel,
     navController: NavHostController = rememberNavController(),
     onBackPressed: () -> Boolean,
 ) {
+
+    editBmiViewModel.uiStateBmi.collectAsState(initial = UiState.Loading).value.let { uiState ->
+        when (uiState) {
+            is UiState.Loading -> {
+                editBmiViewModel.geteditBmi()
+                Log.d("masuk Loading", "Loading Boss")
+            }
+            is UiState.Success -> {
+                Log.d("Ada Data", uiState.data.toString())
+                editBmiScreen(onBackPressed = onBackPressed, editBmiViewModel = editBmiViewModel, navController = navController, bmi = uiState.data)
+            }
+
+            is UiState.Error -> {
+                Log.d("error", "Masukl Error")
+            }
+
+        }
+    }
+
+}
+
+@Composable
+fun editBmiScreen(
+    modifier: Modifier = Modifier,
+    editBmiViewModel: LoginViewModel,
+    navController: NavHostController = rememberNavController(),
+    onBackPressed: () -> Boolean,
+    bmi: EditBmi
+
+){
     Scaffold(
         topBar = {
             TopAppBar(
@@ -81,29 +119,35 @@ fun editBmi(
                 MyTextFieldValueComponent(
                     labelValue = "Height",
                     onTextChanged = {
-                        editBmiViewModel.onEvent(EditBmiUIEvent.HeightChanged(it))
+                        editBmiViewModel.onEventBMI(EditBmiUIEvent.HeightChanged(it))
                     },
-                    value = "175",
+                    value = bmi.height.toString(),
                     enabled = true
                 )
                 MyTextFieldValueComponent(
                     labelValue = "Weight",
                     onTextChanged = {
-                        editBmiViewModel.onEvent(EditBmiUIEvent.WeightChanged(it))
+                        editBmiViewModel.onEventBMI(EditBmiUIEvent.WeightChanged(it))
                     },
-                    value = "71",
+                    value = bmi.weight.toString(),
                     enabled = true
                 )
-                MyTextFieldValueComponent(
-                    labelValue = "Intensity",
+//                MyTextFieldValueComponent(
+//                    labelValue = "Intensity",
+//                    onTextChanged = {
+//                        editBmiViewModel.onEventBMI(EditBmiUIEvent.IntensityChanged(it))
+//                    },
+//                    value = bmi.intensity.toString(),
+//                    enabled = true
+//                )
+                dropDownIntensity(
                     onTextChanged = {
-                        editBmiViewModel.onEvent(EditBmiUIEvent.IntensityChanged(it))
+                        editBmiViewModel.onEventBMI(EditBmiUIEvent.IntensityChanged(it))
                     },
-                    value = "Heavy Weight",
-                    enabled = true
+                    value = bmi.intensity.toString()
                 )
                 bluebutton(text = "Update", onClick = {
-                    editBmiViewModel.onEvent(EditBmiUIEvent.RegisterButtonClicked)
+                    editBmiViewModel.onEventBMI(EditBmiUIEvent.RegisterButtonClicked)
                     onBackPressed()
                 })
             }
@@ -111,5 +155,4 @@ fun editBmi(
 
 
     }
-
 }

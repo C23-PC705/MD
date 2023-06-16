@@ -1,5 +1,6 @@
 package com.example.jimbro
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,31 +16,47 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.core.DataStore
+import androidx.datastore.dataStore
+
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.jimbro.model.UserPreference
+
 import com.example.jimbro.ui.navigation.Screen
 import com.example.jimbro.ui.screens.*
 import com.example.jimbro.ui.screens.EditBmi.editBmi
 import com.example.jimbro.ui.screens.EditPassword.EditPassword
 import com.example.jimbro.ui.screens.EditProfile.EditProfile
+import com.example.jimbro.ui.screens.login.LoginViewModel
 import com.example.jimbro.ui.theme.disableBottomBar
 import com.example.jimbro.ui.theme.primary
 import com.example.jimbro.ui.theme.secondary
+//import kotlin.coroutines.jvm.internal.CompletedContinuation.context
 
 //import com.example.jimbro.ui.theme.JimBroTheme
 
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+
 class MainActivity : ComponentActivity() {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            JimBroApp()
+            JimBroApp(dataStore = dataStore)
         }
     }
 }
@@ -48,11 +65,13 @@ class MainActivity : ComponentActivity() {
 fun JimBroApp(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
+    dataStore: DataStore<Preferences>
 ) {
 
 
     var bottomBarState by rememberSaveable { (mutableStateOf(true)) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
+
 
 
     when (navBackStackEntry?.destination?.route) {
@@ -105,7 +124,11 @@ fun JimBroApp(
             )
         }
     ) { innerPadding ->
+
+        val loginViewModel = LoginViewModel(pref = UserPreference.getInstance(dataStore))
+
         NavHost(
+
             navController = navController,
             startDestination = Screen.Landing.route,
         ) {
@@ -120,20 +143,20 @@ fun JimBroApp(
 
             }
             composable(Screen.Login.route) {
-                Login(modifier = Modifier, navController = navController)
+                Login(modifier = Modifier, navController = navController, loginViewModel = loginViewModel)
 
             }
             composable(Screen.Register.route) {
-                Register(modifier = Modifier, navController = navController)
+                Register(modifier = Modifier, navController = navController, registerViewModel = loginViewModel)
             }
             composable(Screen.editBmi.route) {
-                editBmi(modifier = Modifier, navController = navController, onBackPressed= {navController.popBackStack()})
+                editBmi(modifier = Modifier, navController = navController, onBackPressed= {navController.popBackStack()},  editBmiViewModel = loginViewModel)
             }
             composable(Screen.editUser.route) {
-                EditProfile(modifier = Modifier, navController = navController, onBackPressed= {navController.popBackStack()})
+                EditProfile(modifier = Modifier, navController = navController, onBackPressed= {navController.popBackStack()},  editProfileViewModel = loginViewModel)
             }
             composable(Screen.editPassword.route) {
-                EditPassword(modifier = Modifier, navController = navController, onBackPressed= {navController.popBackStack()})
+                EditPassword(modifier = Modifier, navController = navController, onBackPressed= {navController.popBackStack()},  editProfileViewModel = loginViewModel)
             }
         }
     }
@@ -192,5 +215,6 @@ fun BottomNavigationBar(
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    JimBroApp()
+//    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+//    JimBroApp(dataStore = dataStore)
 }

@@ -9,7 +9,7 @@ sealed class SignupUIEvent{
     data class HeightChanged(val height: String) : SignupUIEvent()
     data class WeightChanged(val weight: String) : SignupUIEvent()
     data class IntensityChanged(val intensity: String) : SignupUIEvent()
-    data class genderChange(val gender:Boolean) : SignupUIEvent()
+    data class genderChange(val gender:String) : SignupUIEvent()
 
     object RegisterButtonClicked : SignupUIEvent()
 }

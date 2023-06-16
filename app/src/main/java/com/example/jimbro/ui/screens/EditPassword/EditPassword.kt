@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -20,12 +21,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.jimbro.R
+import com.example.jimbro.model.EditUser
 import com.example.jimbro.ui.components.MyTextFieldComponent
 import com.example.jimbro.ui.components.MyTextFieldValueComponent
 import com.example.jimbro.ui.components.bluebutton
 import com.example.jimbro.ui.navigation.Screen
 import com.example.jimbro.ui.screens.EditProfile.EditProfileUIEvent
-import com.example.jimbro.ui.screens.EditProfile.EditProfileViewModel
+
+import com.example.jimbro.ui.screens.login.LoginViewModel
+import com.example.jimbro.ui.screens.login.UiState
 import com.example.jimbro.ui.theme.background
 import com.example.jimbro.ui.theme.primary
 import com.example.jimbro.ui.theme.secondary
@@ -34,10 +38,11 @@ import com.example.jimbro.ui.theme.white
 @Composable
 fun EditPassword(
     modifier: Modifier = Modifier,
-    editProfileViewModel: EditProfileViewModel = viewModel(),
+    editProfileViewModel: LoginViewModel,
     navController: NavHostController = rememberNavController(),
     onBackPressed: () -> Boolean,
 ) {
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -79,30 +84,33 @@ fun EditPassword(
 
 
                 MyTextFieldComponent(
-                    labelValue = "Email",
+                    labelValue = "Password Lama",
                     onTextChanged = {
-                        editProfileViewModel.onEvent(EditProfileUIEvent.EmailChanged(it))
+                        editProfileViewModel.onEventChangePassword(EditPasswordUIEvent.passwordLama(
+                            it))
                     },
 
+                    )
+
+
+                MyTextFieldComponent(
+                    labelValue = "Password Terbaru",
+                    onTextChanged = {
+                        editProfileViewModel.onEventChangePassword(EditPasswordUIEvent.passwordTerbaru(
+                            it))
+                    },
                 )
 
 
                 MyTextFieldComponent(
-                    labelValue = "Password",
+                    labelValue = "Ulangi Password Terbaru",
                     onTextChanged = {
-                        editProfileViewModel.onEvent(EditProfileUIEvent.PasswordChanged(it))
-                    },
-                )
-
-
-                MyTextFieldComponent(
-                    labelValue = "Umur",
-                    onTextChanged = {
-                        editProfileViewModel.onEvent(EditProfileUIEvent.AgeChanged(it))
+                        editProfileViewModel.onEventChangePassword(EditPasswordUIEvent.passwordTerbaruUlang(
+                            it))
                     },
                 )
                 bluebutton(text = "Update", onClick = {
-                    editProfileViewModel.onEvent(EditProfileUIEvent.RegisterButtonClicked)
+                    editProfileViewModel.onEventChangePassword(EditPasswordUIEvent.RegisterButtonClicked)
                     onBackPressed()
                 })
             }
